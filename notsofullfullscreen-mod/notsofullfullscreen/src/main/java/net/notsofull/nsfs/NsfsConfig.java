@@ -15,7 +15,7 @@ public class NsfsConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path PATH = FabricLoader.getInstance().getConfigDir().resolve("notsofullfullscreen.json");
 
-    public boolean enabled = false;
+    public boolean enabled = true;
 
     public static NsfsConfig load() {
         if (Files.exists(PATH)) {
