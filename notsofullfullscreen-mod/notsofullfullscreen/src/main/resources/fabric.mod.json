@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "notsofullfullscreen",
+  "version": "${version}",
+  "name": "NotSoFullFullscreen",
+  "description": "Adds a borderless-fullscreen display mode: the window fills the whole screen and looks fullscreen, but Minecraft/GLFW still believes it is in windowed mode.",
+  "authors": ["you"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.notsofull.nsfs.NotSoFullFullscreenMod"
+    ],
+    "modmenu": [
+      "net.notsofull.nsfs.compat.ModMenuIntegration"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "fabric-api": "*",
+    "minecraft": "~1.21.1",
+    "java": ">=21"
+  },
+  "recommends": {
+    "sodium": "*",
+    "modmenu": "*"
+  },
+  "custom": {
+    "modmenu:clientsideOnly": true
+  }
+}
