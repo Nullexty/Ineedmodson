@@ -1,22 +1,11 @@
 package net.notsofull.nsfs;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.class_310;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
 /**
  * Implements "borderless fullscreen" / "fullscreen windowed" mode.
- *
- * The trick: Minecraft's own fullscreen toggle calls glfwSetWindowMonitor with an
- * actual monitor handle, which puts GLFW into exclusive fullscreen (this is what
- * options.fullscreen / Window#isFullscreen() tracks). Instead, we leave the window
- * in GLFW "windowed" mode (monitor = NULL) but:
- *   1. strip the OS window decorations (title bar / border), and
- *   2. resize + reposition the window to exactly cover the monitor's resolution.
- *
- * From Minecraft's perspective nothing changed - it's still windowed, isFullscreen()
- * still returns false, and options.fullscreen is never touched. Visually, though,
- * it fills the screen with no border, indistinguishable from real fullscreen.
  */
 public final class WindowModeHelper {
     private static boolean enabled = false;
@@ -41,28 +30,30 @@ public final class WindowModeHelper {
     }
 
     private static void apply() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.getWindow() == null) {
+        class_310 client = class_310.method_1551();
+        if (client == null || client.method_22683() == null) {
             return;
         }
-        long handle = client.getWindow().getHandle();
+
+        long handle = client.method_22683().method_4490();
         if (handle == 0L) {
             return;
         }
 
         if (enabled && !active) {
-            // If the player is in real exclusive fullscreen, back out of it first -
-            // NotSoFullFullscreen only makes sense starting from windowed mode.
-            if (client.getWindow().isFullscreen()) {
-                client.getWindow().toggleFullscreen();
+            // Leave exclusive fullscreen if enabled.
+            if (client.method_22683().method_4498()) {
+                client.method_22683().method_4500();
             }
 
+            // Save current window position.
             int[] xArr = new int[1];
             int[] yArr = new int[1];
             GLFW.glfwGetWindowPos(handle, xArr, yArr);
             prevX = xArr[0];
             prevY = yArr[0];
 
+            // Save current window size.
             int[] wArr = new int[1];
             int[] hArr = new int[1];
             GLFW.glfwGetWindowSize(handle, wArr, hArr);
@@ -73,13 +64,37 @@ public final class WindowModeHelper {
             if (monitor != 0L) {
                 GLFWVidMode mode = GLFW.glfwGetVideoMode(monitor);
                 if (mode != null) {
+
+                    // Get the monitor's actual position in the virtual desktop.
+                    int[] monitorX = new int[1];
+                    int[] monitorY = new int[1];
+                    GLFW.glfwGetMonitorPos(monitor, monitorX, monitorY);
+
                     GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_DECORATED, GLFW.GLFW_FALSE);
-                    GLFW.glfwSetWindowMonitor(handle, 0L, 0, 0, mode.width(), mode.height(), GLFW.GLFW_DONT_CARE);
+
+                    GLFW.glfwSetWindowMonitor(
+                            handle,
+                            0L,
+                            monitorX[0],
+                            monitorY[0],
+                            mode.width(),
+                            mode.height(),
+                            GLFW.GLFW_DONT_CARE
+                    );
+
                     active = true;
                 }
             }
         } else if (!enabled && active) {
-            GLFW.glfwSetWindowMonitor(handle, 0L, prevX, prevY, prevWidth, prevHeight, GLFW.GLFW_DONT_CARE);
+            GLFW.glfwSetWindowMonitor(
+                    handle,
+                    0L,
+                    prevX,
+                    prevY,
+                    prevWidth,
+                    prevHeight,
+                    GLFW.GLFW_DONT_CARE
+            );
             GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_DECORATED, GLFW.GLFW_TRUE);
             active = false;
         }
