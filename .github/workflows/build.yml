@@ -6,7 +6,7 @@ on:
 
 defaults:
   run:
-    working-directory: PATH_HERE
+    working-directory: notsofullfullscreen-mod/notsofullfullscreen
 
 jobs:
   build:
