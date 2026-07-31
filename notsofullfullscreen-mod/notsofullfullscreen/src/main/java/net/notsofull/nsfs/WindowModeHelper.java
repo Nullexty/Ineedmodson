@@ -1,6 +1,6 @@
 package net.notsofull.nsfs;
 
-import net.minecraft.class_310;
+import net.minecraft.MinecraftClient;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 
@@ -30,7 +30,7 @@ public final class WindowModeHelper {
     }
 
     private static void apply() {
-        class_310 client = class_310.method_1551();
+        MinecraftClient client = MinecraftClient.method_1551();
         if (client == null || client.method_22683() == null) {
             return;
         }
