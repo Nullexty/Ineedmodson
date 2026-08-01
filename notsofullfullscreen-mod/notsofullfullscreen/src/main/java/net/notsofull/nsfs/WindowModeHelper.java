@@ -53,14 +53,18 @@ public final class WindowModeHelper {
             prevWidth = wArr[0];
             prevHeight = hArr[0];
 
-            long monitor = GLFW.glfwGetPrimaryMonitor();
+          long monitor = GLFW.glfwGetPrimaryMonitor();
             if (monitor != 0L) {
                 GLFWVidMode mode = GLFW.glfwGetVideoMode(monitor);
                 if (mode != null) {
-GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_DECORATED, GLFW.GLFW_FALSE);
+                    int[] monX = new int[1];
+                    int[] monY = new int[1];
+                    GLFW.glfwGetMonitorPos(monitor, monX, monY);
+
+                    GLFW.glfwSetWindowAttrib(handle, GLFW.GLFW_DECORATED, GLFW.GLFW_FALSE);
                     // +1 pixel of height stops Windows from silently treating this as real
                     // exclusive fullscreen (which caused the alt-tab flash and capture lag).
-                    GLFW.glfwSetWindowMonitor(handle, 0L, 0, 0, mode.width(), mode.height() + 1, GLFW.GLFW_DONT_CARE);
+                    GLFW.glfwSetWindowMonitor(handle, 0L, monX[0], monY[0], mode.width(), mode.height() + 1, GLFW.GLFW_DONT_CARE);
                     active = true;
                 }
             }
